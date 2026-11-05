@@ -1,0 +1,9 @@
+# Ativar o motor de reescrita de URL do Apache
+RewriteEngine On
+
+# Não aplicar a regra se for um ficheiro ou diretório existente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Capturar todo o caminho da rota e passar para a variável url
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

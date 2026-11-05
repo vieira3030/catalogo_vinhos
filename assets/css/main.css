@@ -1,0 +1,387 @@
+/* Importação das fontes Google Fonts: Playfair Display para títulos e Inter para texto */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
+
+/* Variáveis globais de cores e efeitos do tema premium da Adega Digital */
+:root {
+    --bg-main: #f9f6f0;            /* Fundo tom champanhe suave */
+    --burgundy-dark: #3b0c15;      /* Borgonha escuro profundo */
+    --burgundy-main: #5c1323;      /* Borgonha principal */
+    --burgundy-light: #7a1c30;     /* Borgonha claro para estados de hover */
+    --gold-accent: #c59b27;        /* Dourado metálico para destaques */
+    --gold-light: #e6c875;         /* Dourado claro */
+    --text-dark: #2c221e;          /* Cor do texto principal */
+    --text-muted: #6e655f;         /* Cor do texto secundário */
+    --card-bg: #ffffff;            /* Fundo dos cartões e caixas */
+    --border-color: #e8e1d7;       /* Cor das bordas suaves */
+    --shadow-soft: 0 10px 30px rgba(59, 12, 21, 0.06);
+    --shadow-hover: 0 15px 35px rgba(59, 12, 21, 0.12);
+}
+
+/* Reset básico de margens e configuração do modelo de caixa */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos gerais do corpo da página */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* Cabeçalho principal com gradiente borgonha e linha inferior dourada */
+header {
+    background: linear-gradient(135deg, var(--burgundy-dark) 0%, var(--burgundy-main) 100%);
+    color: white;
+    padding: 1.8rem 0;
+    border-bottom: 3px solid var(--gold-accent);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Alinhamento e limitação de largura do conteúdo do cabeçalho */
+header .header-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Título principal do cabeçalho */
+header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+}
+
+header h1 span {
+    color: var(--gold-accent);
+}
+
+/* Navegação do cabeçalho */
+nav {
+    display: flex;
+    gap: 1.2rem;
+}
+
+nav a {
+    color: #f0e6d9;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+nav a:hover {
+    color: var(--gold-light);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Contentor principal do conteúdo da página */
+.container {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+}
+
+/* Título da secção atual */
+.page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--burgundy-dark);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Barra de pesquisa e seleção de filtros */
+.filters-bar {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filters-bar input, 
+.filters-bar select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    background-color: #fcfbfa;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.filters-bar input:focus, 
+.filters-bar select:focus {
+    border-color: var(--gold-accent);
+    background-color: #ffffff;
+}
+
+.filters-bar input {
+    flex: 2;
+    min-width: 200px;
+}
+
+.filters-bar select {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Estilos base dos botões */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.4rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+/* Botão principal (Filtrar / Submeter) */
+.btn-primary {
+    background: linear-gradient(135deg, var(--burgundy-main) 0%, var(--burgundy-dark) 100%);
+    color: white;
+    border: 1px solid var(--burgundy-dark);
+}
+
+.btn-primary:hover {
+    background: var(--burgundy-light);
+    box-shadow: 0 4px 12px rgba(92, 19, 35, 0.25);
+}
+
+/* Botão secundário (Limpar / Cancelar) */
+.btn-secondary {
+    background-color: #eae3d9;
+    color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+    background-color: #ded4c5;
+}
+
+/* Botão de edição (Aviso) */
+.btn-warning {
+    background-color: #fff8e6;
+    color: #946c00;
+    border: 1px solid #f3e1b3;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.btn-warning:hover {
+    background-color: #fcefd0;
+}
+
+/* Botão de remoção (Perigo) */
+.btn-danger {
+    background-color: #fdf2f2;
+    color: #b91c1c;
+    border: 1px solid #f8d7da;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.btn-danger:hover {
+    background-color: #fbe4e4;
+}
+
+/* Grelha responsiva de exibição dos cartões */
+.grid-vinhos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* Cartão de visualização do vinho */
+.card-vinho {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 1.8rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Linha estética lateral em dourado nos cartões */
+.card-vinho::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: var(--gold-accent);
+}
+
+.card-vinho:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card-vinho h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--burgundy-dark);
+    margin-bottom: 1rem;
+}
+
+.card-info {
+    margin-bottom: 1.2rem;
+}
+
+.card-info p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.card-info p strong {
+    color: var(--text-dark);
+}
+
+/* Emblemas de categoria/tipo */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.4rem;
+    background-color: #f4ede2;
+    color: var(--burgundy-main);
+    border: 1px solid #e2d5c3;
+}
+
+/* Área de botões de ação do cartão */
+.card-actions {
+    display: flex;
+    gap: 0.6rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+/* Formulário de criação e edição */
+.form-card {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-card h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--burgundy-dark);
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.4rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.form-group input, 
+.form-group select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    background-color: #fcfbfa;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+    border-color: var(--gold-accent);
+    outline: none;
+    background-color: #ffffff;
+}
+
+/* Componente de navegação entre páginas (Paginação) */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+.page-link {
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    background-color: var(--card-bg);
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+}
+
+.page-link:hover {
+    background-color: var(--burgundy-main);
+    color: white;
+    border-color: var(--burgundy-dark);
+}
+
+.page-link.active {
+    background: linear-gradient(135deg, var(--burgundy-main) 0%, var(--burgundy-dark) 100%);
+    color: white;
+    border-color: var(--burgundy-dark);
+    box-shadow: 0 4px 10px rgba(92, 19, 35, 0.2);
+}
+
+/* Rodapé principal */
+footer {
+    background-color: var(--burgundy-dark);
+    color: #cbbab0;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 5rem;
+    font-size: 0.9rem;
+    border-top: 3px solid var(--gold-accent);
+}

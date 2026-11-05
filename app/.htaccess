@@ -1,0 +1,2 @@
+# Proibir o acesso direto aos ficheiros dentro da pasta app por razões de segurança
+Deny from all
