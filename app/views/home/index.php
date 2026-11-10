@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adega Digital - Catálogo de Vinhos</title>
-    <!-- Carregamento do CSS -->
+    <!-- Estilos CSS principais -->
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css">
 </head>
 <body>
 
-    <!-- Cabeçalho principal -->
+    <!-- Cabeçalho principal com navegação -->
     <header>
         <div class="header-content">
             <h1>🍷 Adega Digital</h1>
@@ -23,9 +23,18 @@
     </header>
 
     <div class="container">
+        <!-- Exibição de mensagens flash de feedback -->
+        <?php if (isset($_SESSION['flash'])): ?>
+            <div class="alert alert-<?= $_SESSION['flash']['tipo'] ?>">
+                <?= $_SESSION['flash']['texto'] ?>
+            </div>
+            <!-- Limpar mensagem após exibição -->
+            <?php unset($_SESSION['flash']); ?>
+        <?php endif; ?>
+
         <h2>Catálogo de Vinhos</h2>
 
-        <!-- Formulário de Filtros e Pesquisa -->
+        <!-- Formulário de Filtros, Pesquisa e Ordenação -->
         <form method="GET" action="<?= BASE_URL ?>" class="filters-bar">
             <input type="text" name="q" placeholder="Pesquisar por nome..." value="<?= htmlspecialchars($data['pesquisa']) ?>">
             
@@ -47,11 +56,19 @@
                 <?php endforeach; ?>
             </select>
 
+            <!-- Seletor de Ordenação Sem "Mais Recentes" -->
+            <select name="ordem">
+                <option value="nome_asc" <?= $data['ordem_selecionada'] == 'nome_asc' ? 'selected' : '' ?>>Nome (A-Z)</option>
+                <option value="nome_desc" <?= $data['ordem_selecionada'] == 'nome_desc' ? 'selected' : '' ?>>Nome (Z-A)</option>
+                <option value="regiao_asc" <?= $data['ordem_selecionada'] == 'regiao_asc' ? 'selected' : '' ?>>Região (A-Z)</option>
+                <option value="tipo_asc" <?= $data['ordem_selecionada'] == 'tipo_asc' ? 'selected' : '' ?>>Tipo (A-Z)</option>
+            </select>
+
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <a href="<?= BASE_URL ?>" class="btn btn-secondary">Limpar</a>
         </form>
 
-        <!-- Lista de Vinhos (6 por página) -->
+        <!-- Lista de Vinhos em grelha (6 por página) -->
         <div class="grid-vinhos">
             <?php if (!empty($data['vinhos'])): ?>
                 <?php foreach ($data['vinhos'] as $vinho): ?>
@@ -72,36 +89,26 @@
             <?php endif; ?>
         </div>
 
-       <!-- Controlo de Paginação Compacta (máximo 4 números visíveis de cada vez) -->
+        <!-- Controlo de Paginação Compacta -->
         <?php if ($data['total_paginas'] > 1): ?>
             <?php
-                // Definir limite de 4 números visíveis na barra
                 $max_visiveis = 4;
-
-                // Calcular o intervalo inicial e final com base na página atual
                 $inicio = max(1, $data['pagina_atual'] - 1);
                 $fim = min($data['total_paginas'], $inicio + ($max_visiveis - 1));
 
-                // Ajustar o início caso esteja próximo do final para manter sempre 4 números
                 if ($fim - $inicio + 1 < $max_visiveis) {
                     $inicio = max(1, $fim - ($max_visiveis - 1));
                 }
             ?>
 
             <div class="pagination">
-                <!-- Botão para a Primeira Página -->
                 <?php if ($data['pagina_atual'] > 1): ?>
                     <?php $params = $_GET; $params['pagina'] = 1; ?>
                     <a href="<?= BASE_URL ?>?<?= http_build_query($params) ?>" class="page-link" title="Primeira Página">&laquo;&laquo;</a>
-                <?php endif; ?>
-
-                <!-- Botão Página Anterior -->
-                <?php if ($data['pagina_atual'] > 1): ?>
-                    <?php $params = $_GET; $params['pagina'] = $data['pagina_atual'] - 1; ?>
+                    <?php $params['pagina'] = $data['pagina_atual'] - 1; ?>
                     <a href="<?= BASE_URL ?>?<?= http_build_query($params) ?>" class="page-link">&laquo; Anterior</a>
                 <?php endif; ?>
 
-                <!-- Números Dinâmicos das Páginas (exibe apenas o intervalo de 4 páginas) -->
                 <?php for ($i = $inicio; $i <= $fim; $i++): ?>
                     <?php $params = $_GET; $params['pagina'] = $i; ?>
                     <a href="<?= BASE_URL ?>?<?= http_build_query($params) ?>" class="page-link <?= $i == $data['pagina_atual'] ? 'active' : '' ?>">
@@ -109,15 +116,10 @@
                     </a>
                 <?php endfor; ?>
 
-                <!-- Botão Próxima Página -->
                 <?php if ($data['pagina_atual'] < $data['total_paginas']): ?>
                     <?php $params = $_GET; $params['pagina'] = $data['pagina_atual'] + 1; ?>
                     <a href="<?= BASE_URL ?>?<?= http_build_query($params) ?>" class="page-link">Próximo &raquo;</a>
-                <?php endif; ?>
-
-                <!-- Botão para a Última Página -->
-                <?php if ($data['pagina_atual'] < $data['total_paginas']): ?>
-                    <?php $params = $_GET; $params['pagina'] = $data['total_paginas']; ?>
+                    <?php $params['pagina'] = $data['total_paginas']; ?>
                     <a href="<?= BASE_URL ?>?<?= http_build_query($params) ?>" class="page-link" title="Última Página">&raquo;&raquo;</a>
                 <?php endif; ?>
             </div>

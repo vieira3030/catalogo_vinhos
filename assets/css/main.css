@@ -17,7 +17,7 @@
     --shadow-hover: 0 15px 35px rgba(59, 12, 21, 0.12);
 }
 
-/* Reset básico de margens e configuração do modelo de caixa */
+/* Reset básico de margens e caixa */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -32,7 +32,7 @@ body {
     line-height: 1.6;
 }
 
-/* Cabeçalho principal com gradiente borgonha e linha inferior dourada */
+/* Cabeçalho principal */
 header {
     background: linear-gradient(135deg, var(--burgundy-dark) 0%, var(--burgundy-main) 100%);
     color: white;
@@ -41,7 +41,6 @@ header {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Alinhamento e limitação de largura do conteúdo do cabeçalho */
 header .header-content {
     max-width: 1100px;
     margin: 0 auto;
@@ -53,7 +52,6 @@ header .header-content {
     gap: 1rem;
 }
 
-/* Título principal do cabeçalho */
 header h1 {
     font-family: 'Playfair Display', serif;
     font-size: 2.1rem;
@@ -87,7 +85,7 @@ nav a:hover {
     background: rgba(255, 255, 255, 0.08);
 }
 
-/* Contentor principal do conteúdo da página */
+/* Contentor principal */
 .container {
     max-width: 1100px;
     margin: 3rem auto;
@@ -104,7 +102,43 @@ nav a:hover {
     padding-bottom: 0.5rem;
 }
 
-/* Barra de pesquisa e seleção de filtros */
+/* Estilos das Mensagens Flash de Feedback */
+.alert {
+    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    margin-bottom: 1.8rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-soft);
+    animation: fadeIn 0.4s ease;
+}
+
+.alert-sucesso {
+    background-color: #e6f4ea;
+    color: #137333;
+    border: 1px solid #ceead6;
+}
+
+.alert-aviso {
+    background-color: #fef7e0;
+    color: #b06000;
+    border: 1px solid #feefc3;
+}
+
+.alert-erro {
+    background-color: #fce8e6;
+    color: #c5221f;
+    border: 1px solid #fad2cf;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Barra de pesquisa, filtros e ordenação com tamanho de fonte ajustado */
 .filters-bar {
     background: var(--card-bg);
     padding: 1.5rem;
@@ -112,19 +146,21 @@ nav a:hover {
     margin-bottom: 2.5rem;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-soft);
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr) auto auto;
+    gap: 0.8rem;
     align-items: center;
 }
 
+/* Campos de entrada e menus suspensos com tamanho de letra reduzido */
 .filters-bar input, 
 .filters-bar select {
-    padding: 0.75rem 1rem;
+    width: 100%;
+    padding: 0.7rem 0.5rem; /* Redução do espaçamento interno */
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.82rem; /* Redução do tamanho da fonte para caber todo o texto */
     background-color: #fcfbfa;
     color: var(--text-dark);
     outline: none;
@@ -137,16 +173,24 @@ nav a:hover {
     background-color: #ffffff;
 }
 
-.filters-bar input {
-    flex: 2;
-    min-width: 200px;
+/* Responsividade para ecrãs menores */
+@media (max-width: 900px) {
+    .filters-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+    .filters-bar input {
+        grid-column: span 2;
+    }
 }
 
-.filters-bar select {
-    flex: 1;
-    min-width: 150px;
+@media (max-width: 550px) {
+    .filters-bar {
+        grid-template-columns: 1fr;
+    }
+    .filters-bar input {
+        grid-column: span 1;
+    }
 }
-
 /* Estilos base dos botões */
 .btn {
     display: inline-flex;
@@ -162,7 +206,6 @@ nav a:hover {
     transition: all 0.3s ease;
 }
 
-/* Botão principal (Filtrar / Submeter) */
 .btn-primary {
     background: linear-gradient(135deg, var(--burgundy-main) 0%, var(--burgundy-dark) 100%);
     color: white;
@@ -174,7 +217,6 @@ nav a:hover {
     box-shadow: 0 4px 12px rgba(92, 19, 35, 0.25);
 }
 
-/* Botão secundário (Limpar / Cancelar) */
 .btn-secondary {
     background-color: #eae3d9;
     color: var(--text-dark);
@@ -184,7 +226,6 @@ nav a:hover {
     background-color: #ded4c5;
 }
 
-/* Botão de edição (Aviso) */
 .btn-warning {
     background-color: #fff8e6;
     color: #946c00;
@@ -197,7 +238,6 @@ nav a:hover {
     background-color: #fcefd0;
 }
 
-/* Botão de remoção (Perigo) */
 .btn-danger {
     background-color: #fdf2f2;
     color: #b91c1c;
@@ -210,14 +250,14 @@ nav a:hover {
     background-color: #fbe4e4;
 }
 
-/* Grelha responsiva de exibição dos cartões */
+/* Grelha de exibição dos cartões */
 .grid-vinhos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
 }
 
-/* Cartão de visualização do vinho */
+/* Cartão de vinho */
 .card-vinho {
     background: var(--card-bg);
     border-radius: 14px;
@@ -232,7 +272,6 @@ nav a:hover {
     overflow: hidden;
 }
 
-/* Linha estética lateral em dourado nos cartões */
 .card-vinho::before {
     content: '';
     position: absolute;
@@ -255,10 +294,6 @@ nav a:hover {
     margin-bottom: 1rem;
 }
 
-.card-info {
-    margin-bottom: 1.2rem;
-}
-
 .card-info p {
     font-size: 0.95rem;
     color: var(--text-muted);
@@ -269,22 +304,6 @@ nav a:hover {
     color: var(--text-dark);
 }
 
-/* Emblemas de categoria/tipo */
-.badge {
-    display: inline-block;
-    padding: 0.25rem 0.7rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 0.4rem;
-    background-color: #f4ede2;
-    color: var(--burgundy-main);
-    border: 1px solid #e2d5c3;
-}
-
-/* Área de botões de ação do cartão */
 .card-actions {
     display: flex;
     gap: 0.6rem;
@@ -339,7 +358,7 @@ nav a:hover {
     background-color: #ffffff;
 }
 
-/* Componente de navegação entre páginas (Paginação) */
+/* Componente de paginação */
 .pagination {
     display: flex;
     justify-content: center;
@@ -375,7 +394,7 @@ nav a:hover {
     box-shadow: 0 4px 10px rgba(92, 19, 35, 0.2);
 }
 
-/* Rodapé principal */
+/* Rodapé */
 footer {
     background-color: var(--burgundy-dark);
     color: #cbbab0;
@@ -384,4 +403,63 @@ footer {
     margin-top: 5rem;
     font-size: 0.9rem;
     border-top: 3px solid var(--gold-accent);
+}
+
+/* Grelha para cartões da documentação de API */
+.api-docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Cartão individual de endpoint */
+.api-card {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.api-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.api-header code {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--burgundy-dark);
+    font-size: 0.95rem;
+}
+
+/* Emblema do método HTTP GET */
+.method-badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.method-badge.get {
+    background-color: #e6f4ea;
+    color: #137333;
+    border: 1px solid #ceead6;
+}
+
+.api-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+}
+
+.api-actions {
+    margin-top: auto;
 }

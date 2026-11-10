@@ -1,4 +1,5 @@
 <?php
+// Modelo responsável pela manipulação de dados dos vinhos
 class Vinho {
     private $db;
 
@@ -7,8 +8,8 @@ class Vinho {
         $this->db = (new Db())->conn;
     }
 
-    // Listar vinhos ativos com suporte a paginação e filtros
-    public function getPaginated($pesquisa = '', $regiao_id = '', $tipo_id = '', $limite = 6, $offset = 0) {
+    // Listar vinhos ativos com suporte a paginação, filtros e ordenação dinâmica
+    public function getPaginated($pesquisa = '', $regiao_id = '', $tipo_id = '', $ordem = 'nome_asc', $limite = 6, $offset = 0) {
         $sql = "SELECT v.id, v.nome, r.nome AS regiao, t.tipo 
                 FROM vinhos v
                 LEFT JOIN regioes r ON v.regiao_id = r.id
@@ -18,7 +19,7 @@ class Vinho {
         $params = [];
         $types = "";
 
-        // Filtro por texto livre
+        // Filtro por nome
         if (!empty($pesquisa)) {
             $sql .= " AND v.nome LIKE ?";
             $params[] = "%" . $pesquisa . "%";
@@ -32,15 +33,32 @@ class Vinho {
             $types .= "i";
         }
 
-        // Filtro por tipo
+        // Filtro por tipo de vinho
         if (!empty($tipo_id)) {
             $sql .= " AND v.tipo_id = ?";
             $params[] = $tipo_id;
             $types .= "i";
         }
 
-        // Ordenação e paginação (LIMIT e OFFSET)
-        $sql .= " ORDER BY v.nome ASC LIMIT ? OFFSET ?";
+        // Aplicar a ordenação escolhida pelo utilizador
+        switch ($ordem) {
+            case 'nome_desc':
+                $sql .= " ORDER BY v.nome DESC";
+                break;
+            case 'regiao_asc':
+                $sql .= " ORDER BY r.nome ASC, v.nome ASC";
+                break;
+            case 'tipo_asc':
+                $sql .= " ORDER BY t.tipo ASC, v.nome ASC";
+                break;
+            case 'nome_asc':
+            default:
+                $sql .= " ORDER BY v.nome ASC";
+                break;
+        }
+        
+        // Limites de paginação
+        $sql .= " LIMIT ? OFFSET ?";
         $params[] = $limite;
         $params[] = $offset;
         $types .= "ii";
@@ -54,7 +72,7 @@ class Vinho {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Obter o total de vinhos ativos para calcular o número de páginas
+    // Contagem de registos filtrados para cálculo das páginas
     public function getTotalCount($pesquisa = '', $regiao_id = '', $tipo_id = '') {
         $sql = "SELECT COUNT(*) as total FROM vinhos v WHERE v.ativo = 1";
         $params = [];
@@ -88,12 +106,12 @@ class Vinho {
         return $res['total'] ?? 0;
     }
 
-    // Listar vinhos ativos (usado pela API)
+    // Listar vinhos ativos (utilizado pela API)
     public function getAll($pesquisa = '', $regiao_id = '', $tipo_id = '') {
-        return $this->getPaginated($pesquisa, $regiao_id, $tipo_id, 1000, 0);
+        return $this->getPaginated($pesquisa, $regiao_id, $tipo_id, 'nome_asc', 1000, 0);
     }
 
-    // Listar vinhos que estão na Lixeira (ativo = 0)
+    // Obter vinhos desativados na lixeira
     public function getLixeira() {
         $sql = "SELECT v.id, v.nome, r.nome AS regiao, t.tipo 
                 FROM vinhos v
@@ -105,7 +123,7 @@ class Vinho {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Obter vinho por ID
+    // Consultar vinho por ID
     public function getById($id) {
         $sql = "SELECT * FROM vinhos WHERE id = ?";
         $stmt = $this->db->prepare($sql);
@@ -114,7 +132,7 @@ class Vinho {
         return $stmt->get_result()->fetch_assoc();
     }
 
-    // Criar novo vinho
+    // Criar vinho
     public function create($nome, $regiao_id, $tipo_id) {
         $sql = "INSERT INTO vinhos (nome, regiao_id, tipo_id, ativo) VALUES (?, ?, ?, 1)";
         $stmt = $this->db->prepare($sql);
@@ -130,7 +148,7 @@ class Vinho {
         return $stmt->execute();
     }
 
-    // Soft Delete (Mover para a lixeira)
+    // Soft Delete (Mover para lixeira)
     public function delete($id) {
         $sql = "UPDATE vinhos SET ativo = 0 WHERE id = ?";
         $stmt = $this->db->prepare($sql);
@@ -146,7 +164,7 @@ class Vinho {
         return $stmt->execute();
     }
 
-    // Hard Delete
+    // Eliminar permanentemente
     public function forceDelete($id) {
         $sql = "DELETE FROM vinhos WHERE id = ?";
         $stmt = $this->db->prepare($sql);

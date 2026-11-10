@@ -1,6 +1,8 @@
 <?php
-// Iniciar a sessão para a aplicação
-session_start();
+// Iniciar a sessão para suporte a mensagens flash e autenticação
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Definir constante da URL base para links e redirecionamentos
 define('BASE_URL', '/catalogo_vinhos/');
