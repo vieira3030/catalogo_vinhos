@@ -7,28 +7,29 @@ class Home extends Controller {
         $regiaoModel = $this->model('Regiao');
         $tipoModel = $this->model('Tipo');
 
-        // Capturar filtros de pesquisa e critério de ordenação
+        // Capturar filtros de pesquisa, ordenação e favoritos da query string
         $pesquisa = $_GET['q'] ?? '';
         $regiao_id = $_GET['regiao_id'] ?? '';
         $tipo_id = $_GET['tipo_id'] ?? '';
         $ordem = $_GET['ordem'] ?? 'nome_asc';
+        $favoritos = isset($_GET['favoritos']) && $_GET['favoritos'] == '1' ? 1 : 0;
 
-        // Definição da paginação (6 cartões por página)
+        // Configuração da paginação (6 cartões por página)
         $limite = 6;
         $pagina = isset($_GET['pagina']) && is_numeric($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
         if ($pagina < 1) $pagina = 1;
         
         $offset = ($pagina - 1) * $limite;
 
-        // Obter totais para o cálculo do número de páginas
-        $totalVinhos = $vinhoModel->getTotalCount($pesquisa, $regiao_id, $tipo_id);
+        // Obter contagem de registos filtrados
+        $totalVinhos = $vinhoModel->getTotalCount($pesquisa, $regiao_id, $tipo_id, $favoritos);
         $totalPaginas = ceil($totalVinhos / $limite);
         if ($totalPaginas < 1) $totalPaginas = 1;
 
-        // Consultar vinhos filtrados e ordenados
-        $vinhos = $vinhoModel->getPaginated($pesquisa, $regiao_id, $tipo_id, $ordem, $limite, $offset);
+        // Consultar vinhos garantindo a ordem exata dos 7 parâmetros
+        $vinhos = $vinhoModel->getPaginated($pesquisa, $regiao_id, $tipo_id, $ordem, $favoritos, $limite, $offset);
 
-        // Enviar dados para a vista principal
+        // Enviar os dados para a vista principal
         $this->view('home/index', [
             'vinhos' => $vinhos,
             'regioes' => $regiaoModel->getAll(),
@@ -37,6 +38,7 @@ class Home extends Controller {
             'regiao_selecionada' => $regiao_id,
             'tipo_selecionado' => $tipo_id,
             'ordem_selecionada' => $ordem,
+            'favoritos_selecionado' => $favoritos,
             'pagina_atual' => $pagina,
             'total_paginas' => $totalPaginas,
             'total_registos' => $totalVinhos

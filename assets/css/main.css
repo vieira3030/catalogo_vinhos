@@ -17,7 +17,7 @@
     --shadow-hover: 0 15px 35px rgba(59, 12, 21, 0.12);
 }
 
-/* Reset básico de margens e caixa */
+/* Reset básico de margens e modelo de caixa */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -138,7 +138,7 @@ nav a:hover {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Barra de pesquisa, filtros e ordenação com tamanho de fonte ajustado */
+/* Barra de pesquisa, filtros e ordenação alinhada em linha única */
 .filters-bar {
     background: var(--card-bg);
     padding: 1.5rem;
@@ -152,15 +152,15 @@ nav a:hover {
     align-items: center;
 }
 
-/* Campos de entrada e menus suspensos com tamanho de letra reduzido */
+/* Entradas e seletores com dimensão de fonte ajustada */
 .filters-bar input, 
 .filters-bar select {
     width: 100%;
-    padding: 0.7rem 0.5rem; /* Redução do espaçamento interno */
+    padding: 0.7rem 0.5rem;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.82rem; /* Redução do tamanho da fonte para caber todo o texto */
+    font-size: 0.82rem;
     background-color: #fcfbfa;
     color: var(--text-dark);
     outline: none;
@@ -173,24 +173,29 @@ nav a:hover {
     background-color: #ffffff;
 }
 
-/* Responsividade para ecrãs menores */
-@media (max-width: 900px) {
-    .filters-bar {
-        grid-template-columns: 1fr 1fr;
-    }
-    .filters-bar input {
-        grid-column: span 2;
-    }
+/* Opção do filtro de favoritos */
+.fav-filter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--burgundy-dark);
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 0.7rem 0.6rem;
+    background-color: #fcfbfa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
 }
 
-@media (max-width: 550px) {
-    .filters-bar {
-        grid-template-columns: 1fr;
-    }
-    .filters-bar input {
-        grid-column: span 1;
-    }
+.fav-filter-label input[type="checkbox"] {
+    accent-color: var(--gold-accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
 }
+
 /* Estilos base dos botões */
 .btn {
     display: inline-flex;
@@ -250,14 +255,14 @@ nav a:hover {
     background-color: #fbe4e4;
 }
 
-/* Grelha de exibição dos cartões */
+/* Grelha de cartões */
 .grid-vinhos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
 }
 
-/* Cartão de vinho */
+/* Cartão individual de vinho */
 .card-vinho {
     background: var(--card-bg);
     border-radius: 14px;
@@ -394,18 +399,7 @@ nav a:hover {
     box-shadow: 0 4px 10px rgba(92, 19, 35, 0.2);
 }
 
-/* Rodapé */
-footer {
-    background-color: var(--burgundy-dark);
-    color: #cbbab0;
-    text-align: center;
-    padding: 2rem 0;
-    margin-top: 5rem;
-    font-size: 0.9rem;
-    border-top: 3px solid var(--gold-accent);
-}
-
-/* Grelha para cartões da documentação de API */
+/* Documentação da API na página de Autores */
 .api-docs-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -413,7 +407,6 @@ footer {
     margin-top: 1rem;
 }
 
-/* Cartão individual de endpoint */
 .api-card {
     background: var(--card-bg);
     padding: 1.5rem;
@@ -439,7 +432,6 @@ footer {
     font-size: 0.95rem;
 }
 
-/* Emblema do método HTTP GET */
 .method-badge {
     padding: 0.25rem 0.6rem;
     border-radius: 6px;
@@ -462,4 +454,34 @@ footer {
 
 .api-actions {
     margin-top: auto;
+}
+
+/* Rodapé */
+footer {
+    background-color: var(--burgundy-dark);
+    color: #cbbab0;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 5rem;
+    font-size: 0.9rem;
+    border-top: 3px solid var(--gold-accent);
+}
+
+/* Regras de responsividade para ecrãs mais pequenos */
+@media (max-width: 900px) {
+    .filters-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+    .filters-bar input {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 550px) {
+    .filters-bar {
+        grid-template-columns: 1fr;
+    }
+    .filters-bar input {
+        grid-column: span 1;
+    }
 }

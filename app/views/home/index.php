@@ -16,6 +16,8 @@
             <nav>
                 <a href="<?= BASE_URL ?>">Início</a>
                 <a href="<?= BASE_URL ?>vinhos/criar">+ Adicionar Vinho</a>
+                <!-- Link de Favoritos adicionado ao cabeçalho -->
+                <a href="<?= BASE_URL ?>?favoritos=1">⭐ Favoritos</a>
                 <a href="<?= BASE_URL ?>vinhos/lixeira">🗑️ Lixeira</a>
                 <a href="<?= BASE_URL ?>autores">Autores</a>
             </nav>
@@ -32,10 +34,17 @@
             <?php unset($_SESSION['flash']); ?>
         <?php endif; ?>
 
-        <h2>Catálogo de Vinhos</h2>
+        <h2>
+            <?= !empty($data['favoritos_selecionado']) ? '⭐ Vinhos Favoritos' : 'Catálogo de Vinhos' ?>
+        </h2>
 
         <!-- Formulário de Filtros, Pesquisa e Ordenação -->
         <form method="GET" action="<?= BASE_URL ?>" class="filters-bar">
+            <!-- Manter o estado de favoritos se estiver ativo -->
+            <?php if (!empty($data['favoritos_selecionado'])): ?>
+                <input type="hidden" name="favoritos" value="1">
+            <?php endif; ?>
+
             <input type="text" name="q" placeholder="Pesquisar por nome..." value="<?= htmlspecialchars($data['pesquisa']) ?>">
             
             <select name="regiao_id">
@@ -56,7 +65,6 @@
                 <?php endforeach; ?>
             </select>
 
-            <!-- Seletor de Ordenação Sem "Mais Recentes" -->
             <select name="ordem">
                 <option value="nome_asc" <?= $data['ordem_selecionada'] == 'nome_asc' ? 'selected' : '' ?>>Nome (A-Z)</option>
                 <option value="nome_desc" <?= $data['ordem_selecionada'] == 'nome_desc' ? 'selected' : '' ?>>Nome (Z-A)</option>
@@ -74,7 +82,13 @@
                 <?php foreach ($data['vinhos'] as $vinho): ?>
                     <div class="card-vinho">
                         <div>
-                            <h3><?= htmlspecialchars($vinho['nome']) ?></h3>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <h3><?= htmlspecialchars($vinho['nome']) ?></h3>
+                                <!-- Botão de Estrela de Favorito -->
+                                <a href="<?= BASE_URL ?>vinhos/favorito/<?= $vinho['id'] ?>" style="text-decoration: none; font-size: 1.4rem;" title="Alternar Favorito">
+                                    <?= !empty($vinho['favorito']) ? '⭐' : '☆' ?>
+                                </a>
+                            </div>
                             <p><strong>Região:</strong> <?= htmlspecialchars($vinho['regiao'] ?? 'Não especificada') ?></p>
                             <p><strong>Tipo:</strong> <?= htmlspecialchars($vinho['tipo'] ?? 'Não especificado') ?></p>
                         </div>

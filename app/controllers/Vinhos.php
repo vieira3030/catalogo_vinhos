@@ -153,4 +153,33 @@ class Vinhos extends Controller {
         header('Location: ' . BASE_URL . 'vinhos/lixeira');
         exit;
     }
+
+    // Alternar o estado de favorito de um vinho com mensagem personalizada
+    public function favorito($id = null) {
+        if ($id) {
+            $vinhoModel = $this->model('Vinho');
+            $vinho = $vinhoModel->getById($id);
+
+            if ($vinho) {
+                $vinhoModel->toggleFavorito($id);
+                $eraFavorito = !empty($vinho['favorito']);
+
+                if (!$eraFavorito) {
+                    // Mensagem ao adicionar
+                    $_SESSION['flash'] = [
+                        'tipo' => 'sucesso',
+                        'texto' => '⭐ Vinho "' . htmlspecialchars($vinho['nome']) . '" adicionado aos favoritos!'
+                    ];
+                } else {
+                    // Mensagem ao remover
+                    $_SESSION['flash'] = [
+                        'tipo' => 'aviso',
+                        'texto' => '☆ Vinho "' . htmlspecialchars($vinho['nome']) . '" removido dos favoritos.'
+                    ];
+                }
+            }
+        }
+        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? BASE_URL));
+        exit;
+    }
 }
