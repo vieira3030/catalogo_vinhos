@@ -5,23 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Vinho - Adega Digital</title>
     <!-- Carregamento dos estilos CSS principais -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css?v=2">
 </head>
 <body>
 
-    <!-- Cabeçalho principal com navegação -->
-    <header>
-        <div class="header-content">
-            <h1>🍷 Adega Digital</h1>
-            <nav>
-                <a href="<?= BASE_URL ?>">Início</a>
-                <!-- Link de acesso à Lixeira -->
-                <a href="<?= BASE_URL ?>vinhos/lixeira">🗑️ Lixeira</a>
-                <a href="<?= BASE_URL ?>autores">Autores</a>
-            </nav>
-        </div>
-    </header>
-
+   <?php require_once __DIR__ . '/../includes/header.php'; ?>
+   
     <div class="container">
         <div class="form-card">
             <h2>Adicionar Novo Vinho</h2>
@@ -68,5 +57,28 @@
         </div>
     </div>
 
+<script>
+        // Sincronizar lista e campo de texto livre para evitar conflitos
+        const regiaoSelect = document.getElementById('regiao_id');
+        const novaRegiaoInput = document.querySelector('input[name="nova_regiao"]');
+        const tipoSelect = document.getElementById('tipo_id');
+        const novoTipoInput = document.querySelector('input[name="novo_tipo"]');
+
+        // Ao escolher na lista, limpa o texto personalizado
+        regiaoSelect.addEventListener('change', () => {
+            if (regiaoSelect.value !== '') novaRegiaoInput.value = '';
+        });
+        tipoSelect.addEventListener('change', () => {
+            if (tipoSelect.value !== '') novoTipoInput.value = '';
+        });
+
+        // Ao escrever um texto novo, repõe a lista para "-- Selecione da lista --"
+        novaRegiaoInput.addEventListener('input', () => {
+            if (novaRegiaoInput.value.trim() !== '') regiaoSelect.value = '';
+        });
+        novoTipoInput.addEventListener('input', () => {
+            if (novoTipoInput.value.trim() !== '') tipoSelect.value = '';
+        });
+    </script>
 </body>
 </html>

@@ -1,185 +1,177 @@
 <?php
-// Controlador de Gestão de Vinhos (CRUD + Lixeira + Mensagens Flash)
+// Controlador para gestão de vinhos (protegido por sessão)
 class Vinhos extends Controller {
 
-    // Exibir formulário de criação
+    // Exigir sessão iniciada para qualquer modificação
+    private function verificarAutenticacao() {
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['flash'] = [
+                'tipo' => 'erro',
+                'texto' => 'Precisas de iniciar sessão para realizar esta ação.'
+            ];
+            header('Location: ' . BASE_URL . 'auth/login');
+            exit;
+        }
+    }
+
+    // Exibir formulário de criação de vinho
     public function criar() {
-        $regiaoModel = $this->model('Regiao');
-        $tipoModel = $this->model('Tipo');
+        $this->verificarAutenticacao();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->guardar();
+            return;
+        }
 
         $this->view('vinhos/criar', [
-            'regioes' => $regiaoModel->getAll(),
-            'tipos' => $tipoModel->getAll()
+            'regioes' => $this->model('Regiao')->getAll(),
+            'tipos' => $this->model('Tipo')->getAll()
         ]);
     }
 
-    // Método para guardar um novo vinho
+    // Processar e guardar o novo vinho na base de dados
     public function guardar() {
+        $this->verificarAutenticacao();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nome = trim($_POST['nome']);
-            
-            $regiaoModel = $this->model('Regiao');
-            $tipoModel = $this->model('Tipo');
+            $nome = trim($_POST['nome'] ?? '');
+            $regiao_id = !empty($_POST['regiao_id']) ? (int)$_POST['regiao_id'] : null;
+            $tipo_id = !empty($_POST['tipo_id']) ? (int)$_POST['tipo_id'] : null;
 
-            // Obter ID existente ou criar nova região/tipo se preenchido
-            $regiao_id = !empty($_POST['nova_regiao']) 
-                ? $regiaoModel->getOrCreate($_POST['nova_regiao']) 
-                : (!empty($_POST['regiao_id']) ? $_POST['regiao_id'] : null);
+            // Verificar se o utilizador escreveu uma nova região ou tipo
+            $nova_regiao = trim($_POST['nova_regiao'] ?? $_POST['regiao'] ?? '');
+            $novo_tipo = trim($_POST['novo_tipo'] ?? $_POST['tipo'] ?? '');
 
-            $tipo_id = !empty($_POST['novo_tipo']) 
-                ? $tipoModel->getOrCreate($_POST['novo_tipo']) 
-                : (!empty($_POST['tipo_id']) ? $_POST['tipo_id'] : null);
+            if (!empty($nova_regiao)) {
+                $regiao_id = $this->model('Regiao')->findOrCreate($nova_regiao);
+            }
+            if (!empty($novo_tipo)) {
+                $tipo_id = $this->model('Tipo')->findOrCreate($novo_tipo);
+            }
 
             if (!empty($nome)) {
-                $vinhoModel = $this->model('Vinho');
-                $vinhoModel->create($nome, $regiao_id, $tipo_id);
-
-                // Definir mensagem flash de sucesso
-                $_SESSION['flash'] = [
-                    'tipo' => 'sucesso',
-                    'texto' => '🍷 Vinho "' . htmlspecialchars($nome) . '" adicionado com sucesso!'
-                ];
-            } else {
-                // Definir mensagem flash de erro caso falte o nome
-                $_SESSION['flash'] = [
-                    'tipo' => 'erro',
-                    'texto' => '⚠️ O nome do vinho é obrigatório.'
-                ];
+                $this->model('Vinho')->create($nome, $regiao_id, $tipo_id, $_SESSION['user_id']);
+                $_SESSION['flash'] = ['tipo' => 'sucesso', 'texto' => 'Vinho adicionado à tua conta!'];
+                header('Location: ' . BASE_URL);
+                exit;
             }
         }
-        header('Location: ' . BASE_URL);
+
+        header('Location: ' . BASE_URL . 'vinhos/criar');
         exit;
     }
 
-    // Exibir formulário de edição
+    // Exibir formulário de edição de vinho
     public function editar($id = null) {
-        if (!$id) {
-            header('Location: ' . BASE_URL);
-            exit;
-        }
-
+        $this->verificarAutenticacao();
         $vinhoModel = $this->model('Vinho');
         $vinho = $vinhoModel->getById($id);
 
-        if (!$vinho) {
+        if (!$vinho || ($vinho['user_id'] !== null && $vinho['user_id'] != $_SESSION['user_id'])) {
+            $_SESSION['flash'] = ['tipo' => 'erro', 'texto' => 'Não tens permissão para editar este vinho.'];
             header('Location: ' . BASE_URL);
             exit;
         }
 
-        $regiaoModel = $this->model('Regiao');
-        $tipoModel = $this->model('Tipo');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->atualizar($id);
+            return;
+        }
 
         $this->view('vinhos/editar', [
             'vinho' => $vinho,
-            'regioes' => $regiaoModel->getAll(),
-            'tipos' => $tipoModel->getAll()
+            'regioes' => $this->model('Regiao')->getAll(),
+            'tipos' => $this->model('Tipo')->getAll()
         ]);
     }
 
-    // Atualizar dados de um vinho
-    public function atualizar() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'];
-            $nome = trim($_POST['nome']);
-            $regiao_id = !empty($_POST['regiao_id']) ? $_POST['regiao_id'] : null;
-            $tipo_id = !empty($_POST['tipo_id']) ? $_POST['tipo_id'] : null;
+    // Processar e atualizar os dados do vinho editado
+    public function atualizar($id = null) {
+        $this->verificarAutenticacao();
 
-            if (!empty($id) && !empty($nome)) {
-                $vinhoModel = $this->model('Vinho');
-                $vinhoModel->update($id, $nome, $regiao_id, $tipo_id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id) {
+            $nome = trim($_POST['nome'] ?? '');
+            $regiao_id = !empty($_POST['regiao_id']) ? (int)$_POST['regiao_id'] : null;
+            $tipo_id = !empty($_POST['tipo_id']) ? (int)$_POST['tipo_id'] : null;
 
-                // Definir mensagem flash de sucesso na alteração
+            // Verificar se o utilizador escreveu uma nova região ou tipo
+            $nova_regiao = trim($_POST['nova_regiao'] ?? $_POST['regiao'] ?? '');
+            $novo_tipo = trim($_POST['novo_tipo'] ?? $_POST['tipo'] ?? '');
+
+            if (!empty($nova_regiao)) {
+                $regiao_id = $this->model('Regiao')->findOrCreate($nova_regiao);
+            }
+            if (!empty($novo_tipo)) {
+                $tipo_id = $this->model('Tipo')->findOrCreate($novo_tipo);
+            }
+
+            if (!empty($nome)) {
+                $this->model('Vinho')->update($id, $nome, $regiao_id, $tipo_id, $_SESSION['user_id']);
+                $_SESSION['flash'] = ['tipo' => 'sucesso', 'texto' => 'Vinho atualizado com sucesso!'];
+            }
+        }
+
+        header('Location: ' . BASE_URL);
+        exit;
+    }
+
+    // Alternar favorito na conta atual
+    public function favorito($id = null) {
+        $this->verificarAutenticacao();
+        if ($id) {
+            $vinhoModel = $this->model('Vinho');
+            $vinho = $vinhoModel->getById($id);
+            if ($vinho) {
+                $adicionado = $vinhoModel->toggleFavorito($id, $_SESSION['user_id']);
                 $_SESSION['flash'] = [
-                    'tipo' => 'sucesso',
-                    'texto' => '✏️ Vinho "' . htmlspecialchars($nome) . '" atualizado com sucesso!'
+                    'tipo' => $adicionado ? 'sucesso' : 'aviso',
+                    'texto' => $adicionado 
+                        ? '⭐ "' . htmlspecialchars($vinho['nome']) . '" adicionado aos teus favoritos!' 
+                        : '☆ "' . htmlspecialchars($vinho['nome']) . '" removido dos teus favoritos.'
                 ];
             }
         }
-        header('Location: ' . BASE_URL);
+        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? BASE_URL));
         exit;
     }
 
-    // Mover vinho para a Lixeira (Soft Delete)
+    // Mover vinho para a lixeira
     public function apagar($id = null) {
+        $this->verificarAutenticacao();
         if ($id) {
-            $vinhoModel = $this->model('Vinho');
-            $vinhoModel->delete($id);
-
-            // Definir mensagem flash de aviso ao mover para lixeira
-            $_SESSION['flash'] = [
-                'tipo' => 'aviso',
-                'texto' => '🗑️ Vinho movido para a lixeira.'
-            ];
+            $this->model('Vinho')->delete($id, $_SESSION['user_id']);
+            $_SESSION['flash'] = ['tipo' => 'aviso', 'texto' => 'Vinho movido para a lixeira.'];
         }
         header('Location: ' . BASE_URL);
         exit;
     }
 
-    // Exibir registos na Lixeira
+    // Listar lixeira da conta
     public function lixeira() {
-        $vinhoModel = $this->model('Vinho');
-        $vinhos = $vinhoModel->getLixeira();
+        $this->verificarAutenticacao();
+        $vinhos = $this->model('Vinho')->getLixeira($_SESSION['user_id']);
         $this->view('vinhos/lixeira', ['vinhos' => $vinhos]);
     }
 
     // Restaurar vinho da lixeira
     public function restaurar($id = null) {
+        $this->verificarAutenticacao();
         if ($id) {
-            $vinhoModel = $this->model('Vinho');
-            $vinhoModel->restore($id);
-
-            // Definir mensagem flash de sucesso no restauro
-            $_SESSION['flash'] = [
-                'tipo' => 'sucesso',
-                'texto' => '♻️ Vinho restaurado com sucesso!'
-            ];
+            $this->model('Vinho')->restore($id, $_SESSION['user_id']);
+            $_SESSION['flash'] = ['tipo' => 'sucesso', 'texto' => 'Vinho restaurado para o catálogo!'];
         }
         header('Location: ' . BASE_URL . 'vinhos/lixeira');
         exit;
     }
 
-    // Eliminar definitivamente o vinho da base de dados
+    // Eliminar permanentemente
     public function destruir($id = null) {
+        $this->verificarAutenticacao();
         if ($id) {
-            $vinhoModel = $this->model('Vinho');
-            $vinhoModel->forceDelete($id);
-
-            // Definir mensagem flash de remoção permanente
-            $_SESSION['flash'] = [
-                'tipo' => 'erro',
-                'texto' => '❌ Vinho eliminado definitivamente.'
-            ];
+            $this->model('Vinho')->forceDelete($id, $_SESSION['user_id']);
+            $_SESSION['flash'] = ['tipo' => 'erro', 'texto' => 'Vinho eliminado permanentemente.'];
         }
         header('Location: ' . BASE_URL . 'vinhos/lixeira');
-        exit;
-    }
-
-    // Alternar o estado de favorito de um vinho com mensagem personalizada
-    public function favorito($id = null) {
-        if ($id) {
-            $vinhoModel = $this->model('Vinho');
-            $vinho = $vinhoModel->getById($id);
-
-            if ($vinho) {
-                $vinhoModel->toggleFavorito($id);
-                $eraFavorito = !empty($vinho['favorito']);
-
-                if (!$eraFavorito) {
-                    // Mensagem ao adicionar
-                    $_SESSION['flash'] = [
-                        'tipo' => 'sucesso',
-                        'texto' => '⭐ Vinho "' . htmlspecialchars($vinho['nome']) . '" adicionado aos favoritos!'
-                    ];
-                } else {
-                    // Mensagem ao remover
-                    $_SESSION['flash'] = [
-                        'tipo' => 'aviso',
-                        'texto' => '☆ Vinho "' . htmlspecialchars($vinho['nome']) . '" removido dos favoritos.'
-                    ];
-                }
-            }
-        }
-        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? BASE_URL));
         exit;
     }
 }

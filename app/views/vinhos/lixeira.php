@@ -3,66 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lixeira de Vinhos - Adega Digital</title>
-    <!-- Estilos CSS principais -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css">
+    <title>Lixeira - Adega Digital</title>
+   <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css?v=2">
 </head>
 <body>
 
-    <!-- Cabeçalho principal -->
-    <header>
-        <div class="header-content">
-            <h1>🍷 Adega Digital</h1>
-            <nav>
-                <a href="<?= BASE_URL ?>">Início</a>
-                <a href="<?= BASE_URL ?>vinhos/criar">+ Adicionar Vinho</a>
-                <a href="<?= BASE_URL ?>autores">Autores</a>
-            </nav>
-        </div>
-    </header>
+    <?php require_once __DIR__ . '/../includes/header.php'; ?>
 
     <div class="container">
-        <!-- Exibição de Mensagens Flash de Feedback (Restauro / Remoção) -->
         <?php if (isset($_SESSION['flash'])): ?>
             <div class="alert alert-<?= $_SESSION['flash']['tipo'] ?>">
                 <?= $_SESSION['flash']['texto'] ?>
             </div>
-            <!-- Limpar a mensagem da sessão após exibição -->
             <?php unset($_SESSION['flash']); ?>
         <?php endif; ?>
 
-        <h2 class="page-title">🗑️ Lixeira de Vinhos</h2>
-        <p style="margin-bottom: 2rem; color: var(--text-muted);">Estes vinhos foram removidos do catálogo. Podes restaurá-los ou eliminá-los definitivamente.</p>
+        <div class="page-hero">
+            <div>
+                <span class="eyebrow">Gestão da coleção</span>
+                <h2>Lixeira</h2>
+                <p>Os vinhos nesta lista já não aparecem no catálogo. Pode restaurá-los ou eliminá-los permanentemente.</p>
+            </div>
+            <a href="<?= BASE_URL ?>" class="btn btn-secondary">Voltar ao catálogo</a>
+        </div>
 
-        <!-- Grelha de Vinhos Removidos -->
-        <div class="grid-vinhos">
-            <?php if (!empty($data['vinhos'])): ?>
+        <div class="results-meta">
+            <span><strong><?= count($data['vinhos']) ?></strong> vinhos na lixeira</span>
+        </div>
+
+        <?php if (!empty($data['vinhos'])): ?>
+            <div class="grid-vinhos">
                 <?php foreach ($data['vinhos'] as $vinho): ?>
-                    <div class="card-vinho" style="opacity: 0.85;">
+                    <div class="card-vinho">
                         <div>
+                            <div class="card-top">
+                                <span class="badge-tipo"><?= htmlspecialchars($vinho['tipo'] ?? 'Sem tipo') ?></span>
+                            </div>
                             <h3><?= htmlspecialchars($vinho['nome']) ?></h3>
-                            <p><strong>Região:</strong> <?= htmlspecialchars($vinho['regiao'] ?? 'Não especificada') ?></p>
-                            <p><strong>Tipo:</strong> <?= htmlspecialchars($vinho['tipo'] ?? 'Não especificado') ?></p>
+                            <p class="card-regiao"><strong>Região</strong> · <?= htmlspecialchars($vinho['regiao'] ?? 'Não especificada') ?></p>
                         </div>
+
                         <div class="card-actions">
-                            <a href="<?= BASE_URL ?>vinhos/restaurar/<?= $vinho['id'] ?>" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Restaurar</a>
-                            <a href="<?= BASE_URL ?>vinhos/destruir/<?= $vinho['id'] ?>" class="btn btn-danger" onclick="return confirm('ATENÇÃO: Esta ação é irreversível. Eliminar definitivamente?');">Eliminar</a>
+                            <a href="<?= BASE_URL ?>vinhos/restaurar/<?= $vinho['id'] ?>" class="btn btn-warning">Restaurar</a>
+                            <a href="<?= BASE_URL ?>vinhos/destruir/<?= $vinho['id'] ?>" class="btn btn-danger" onclick="return confirm('Eliminar definitivamente este vinho?');">Eliminar</a>
                         </div>
                     </div>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <p>A lixeira está vazia.</p>
-            <?php endif; ?>
-        </div>
-
-        <div style="margin-top: 2.5rem;">
-            <a href="<?= BASE_URL ?>" class="btn btn-secondary">Voltar ao Catálogo</a>
-        </div>
+            </div>
+        <?php else: ?>
+            <div class="empty-state">
+                <h3>A lixeira está vazia</h3>
+                <p>Quando remover um vinho, poderá restaurá-lo a partir daqui.</p>
+                <a href="<?= BASE_URL ?>" class="btn btn-secondary">Ver catálogo</a>
+            </div>
+        <?php endif; ?>
     </div>
 
-    <!-- Rodapé -->
     <footer>
-        <p>&copy; 2026 - Trabalho Prático de Programação Web</p>
+        <div class="footer-content">
+            <strong>Adega Digital</strong>
+            <span>Trabalho Prático · Programação Web · 2026</span>
+        </div>
     </footer>
 
 </body>

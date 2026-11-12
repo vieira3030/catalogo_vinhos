@@ -3,104 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autores e API - Adega Digital</title>
+    <title>Sobre o Projeto - Adega Digital</title>
     <!-- Estilos CSS principais -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css?v=2">
 </head>
 <body>
 
-    <!-- Cabeçalho principal -->
-    <header>
-        <div class="header-content">
-            <h1>🍷 Adega Digital</h1>
-            <nav>
-                <a href="<?= BASE_URL ?>">Início</a>
-                <a href="<?= BASE_URL ?>vinhos/criar">+ Adicionar Vinho</a>
-                <a href="<?= BASE_URL ?>vinhos/lixeira">🗑️ Lixeira</a>
-                <a href="<?= BASE_URL ?>autores">Autores</a>
-            </nav>
-        </div>
-    </header>
+    <!-- Cabeçalho dinâmico partilhado -->
+    <?php require_once __DIR__ . '/../includes/header.php'; ?>
 
     <div class="container">
-        <h2 class="page-title">👨‍💻 Autores do Projeto</h2>
-
-        <!-- Cartão de Informação da Equipa e Disciplina -->
-        <div class="form-card" style="max-width: 100%; margin-bottom: 3rem;">
-            <h2>Trabalho Prático - Programação Web</h2>
-            <p style="color: var(--text-muted); margin-bottom: 1rem;">
-                Engenharia da Computação Gráfica e Multimédia — ESTG / UNIPVC (2026)
-            </p>
-            <ul style="list-style-type: square; padding-left: 1.2rem; line-height: 1.8;">
-                <li><strong>Rodrigo Vieira</strong></li>
-                <li><strong>André Flores</strong></li>
-                <li><strong>Rodrigo Malheiro</strong></li>
-            </ul>
+        <div class="page-hero">
+            <div>
+                <span class="eyebrow">Quem está por trás</span>
+                <h2>Sobre o projeto</h2>
+            </div>
         </div>
 
-        <h2 class="page-title">🔌 Documentação da API REST (JSON)</h2>
-        <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
-            A aplicação disponibiliza um serviço web interno que devolve os dados em formato JSON para integração externa.
-        </p>
+        <!-- Cartão de identificação académica e autores -->
+        <div class="about-card">
+            <h3>Trabalho Prático · Programação Web</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Engenharia da Computação Gráfica e Multimédia · ESTG / UNIPVC · 2026</p>
 
-        <!-- Documentação dos Endpoints -->
-        <div class="api-docs-grid">
-
-            <!-- Endpoint 1: Listar Todos os Vinhos -->
-            <div class="api-card">
-                <div class="api-header">
-                    <span class="method-badge get">GET</span>
-                    <code>/api/vinhos</code>
-                </div>
-                <p>Devolve a lista completa de todos os vinhos ativos no catálogo em formato JSON.</p>
-                <div class="api-actions">
-                    <a href="<?= BASE_URL ?>api/vinhos" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Testar Endpoint 🔗</a>
-                </div>
+            <div class="authors-list">
+                <span class="author-pill">Rodrigo Vieira</span>
+                <span class="author-pill">André Flores</span>
+                <span class="author-pill">Rodrigo Malheiro</span>
             </div>
-
-            <!-- Endpoint 2: Obter Vinho por ID -->
-            <div class="api-card">
-                <div class="api-header">
-                    <span class="method-badge get">GET</span>
-                    <code>/api/vinhos/{id}</code>
-                </div>
-                <p>Devolve os detalhes de um vinho específico filtrado pelo seu identificador (ex: ID 1).</p>
-                <div class="api-actions">
-                    <a href="<?= BASE_URL ?>api/vinhos/1" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Testar ID 1 🔗</a>
-                </div>
-            </div>
-
-            <!-- Endpoint 3: Listar Regiões Vitivinícolas -->
-            <div class="api-card">
-                <div class="api-header">
-                    <span class="method-badge get">GET</span>
-                    <code>/api/regioes</code>
-                </div>
-                <p>Devolve a lista de todas as regiões vitivinícolas registadas na base de dados.</p>
-                <div class="api-actions">
-                    <a href="<?= BASE_URL ?>api/regioes" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Testar Endpoint 🔗</a>
-                </div>
-            </div>
-
-            <!-- Endpoint 4: Listar Tipos de Vinho -->
-            <div class="api-card">
-                <div class="api-header">
-                    <span class="method-badge get">GET</span>
-                    <code>/api/tipos</code>
-                </div>
-                <p>Devolve todos os tipos de vinho disponíveis (ex: Branco, Tinto, Espumante).</p>
-                <div class="api-actions">
-                    <a href="<?= BASE_URL ?>api/tipos" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Testar Endpoint 🔗</a>
-                </div>
-            </div>
-
         </div>
 
+        <!-- Secção de documentação dos 4 endpoints da API REST -->
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.45rem; margin-bottom: 0.25rem;">API REST</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Endpoints de leitura que devolvem os dados em formato JSON.</p>
+
+        <div class="api-grid">
+            <!-- Endpoint 1: Lista de vinhos -->
+            <div class="api-card">
+                <p style="margin-bottom: 0.5rem;"><span class="method-badge">GET</span><code>/api/vinhos</code></p>
+                <p style="color: var(--text-muted); font-size: 0.86rem; margin-bottom: 1rem;">Lista os vinhos ativos no catálogo.</p>
+                <a href="<?= BASE_URL ?>api/vinhos" target="_blank" class="btn btn-secondary">Abrir endpoint</a>
+            </div>
+
+            <!-- Endpoint 2: Detalhe de um vinho -->
+            <div class="api-card">
+                <p style="margin-bottom: 0.5rem;"><span class="method-badge">GET</span><code>/api/vinhos/{id}</code></p>
+                <p style="color: var(--text-muted); font-size: 0.86rem; margin-bottom: 1rem;">Consulta os dados de um vinho pelo identificador.</p>
+                <a href="<?= BASE_URL ?>api/vinhos/1" target="_blank" class="btn btn-secondary">Testar com ID 1</a>
+            </div>
+
+            <!-- Endpoint 3: Lista de regiões -->
+            <div class="api-card">
+                <p style="margin-bottom: 0.5rem;"><span class="method-badge">GET</span><code>/api/regioes</code></p>
+                <p style="color: var(--text-muted); font-size: 0.86rem; margin-bottom: 1rem;">Lista todas as regiões vitivinícolas registadas.</p>
+                <a href="<?= BASE_URL ?>api/regioes" target="_blank" class="btn btn-secondary">Abrir endpoint</a>
+            </div>
+
+            <!-- Endpoint 4: Lista de tipos de vinho -->
+            <div class="api-card">
+                <p style="margin-bottom: 0.5rem;"><span class="method-badge">GET</span><code>/api/tipos</code></p>
+                <p style="color: var(--text-muted); font-size: 0.86rem; margin-bottom: 1rem;">Lista todos os tipos de vinho disponíveis.</p>
+                <a href="<?= BASE_URL ?>api/tipos" target="_blank" class="btn btn-secondary">Abrir endpoint</a>
+            </div>
+        </div>
     </div>
 
     <!-- Rodapé -->
     <footer>
-        <p>&copy; 2026 - Trabalho Prático de Programação Web</p>
+        <div class="footer-content">
+            <strong>Adega Digital</strong>
+            <span>Trabalho Prático · Programação Web · 2026</span>
+        </div>
     </footer>
 
 </body>
