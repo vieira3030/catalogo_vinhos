@@ -51,7 +51,7 @@
 
             <div class="filter-field">
                 <label for="regiao_id">Região</label>
-                <select id="regiao_id" name="regiao_id">
+                <select id="regiao_id" name="regiao_id" onchange="this.form.submit()">
                     <option value="">Todas</option>
                     <?php foreach ($data['regioes'] as $regiao): ?>
                         <option value="<?= $regiao['id'] ?>" <?= $data['regiao_selecionada'] == $regiao['id'] ? 'selected' : '' ?>>
@@ -63,7 +63,7 @@
 
             <div class="filter-field">
                 <label for="tipo_id">Tipo</label>
-                <select id="tipo_id" name="tipo_id">
+                <select id="tipo_id" name="tipo_id" onchange="this.form.submit()">
                     <option value="">Todos</option>
                     <?php foreach ($data['tipos'] as $tipo): ?>
                         <option value="<?= $tipo['id'] ?>" <?= $data['tipo_selecionado'] == $tipo['id'] ? 'selected' : '' ?>>
@@ -75,7 +75,7 @@
 
             <div class="filter-field">
                 <label for="ordem">Ordenar por</label>
-                <select id="ordem" name="ordem">
+                <select id="ordem" name="ordem" onchange="this.form.submit()">
                     <option value="nome_asc" <?= $data['ordem_selecionada'] == 'nome_asc' ? 'selected' : '' ?>>Nome (A-Z)</option>
                     <option value="nome_desc" <?= $data['ordem_selecionada'] == 'nome_desc' ? 'selected' : '' ?>>Nome (Z-A)</option>
                     <option value="regiao_asc" <?= $data['ordem_selecionada'] == 'regiao_asc' ? 'selected' : '' ?>>Região (A-Z)</option>
@@ -180,5 +180,28 @@
         </div>
     </footer>
 
+<script>
+        // Pesquisa automática com atraso ao escrever o nome
+        const inputPesquisa = document.getElementById('q');
+        let timerPesquisa;
+
+        if (inputPesquisa) {
+            // Manter o foco e o cursor no fim do texto após recarregar a página
+            if (inputPesquisa.value.trim() !== '') {
+                inputPesquisa.focus();
+                const len = inputPesquisa.value.length;
+                inputPesquisa.setSelectionRange(len, len);
+            }
+
+            // Submeter o formulário 400ms depois de parar de escrever
+            inputPesquisa.addEventListener('input', () => {
+                clearTimeout(timerPesquisa);
+                timerPesquisa = setTimeout(() => {
+                    inputPesquisa.form.submit();
+                }, 400);
+            });
+        }
+    </script>
 </body>
+
 </html>

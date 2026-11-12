@@ -44,22 +44,23 @@ class Vinho {
             $sql .= " AND f.id IS NOT NULL";
         }
 
+        // Ordenação estritamente alfabética (sem dar prioridade a vinhos criados pelo utilizador)
         switch ($ordem) {
             case 'nome_desc':
-                $sql .= " ORDER BY v.nome DESC";
+                $sql .= " ORDER BY LOWER(TRIM(v.nome)) DESC";
                 break;
             case 'regiao_asc':
-                $sql .= " ORDER BY r.nome ASC, v.nome ASC";
+                $sql .= " ORDER BY r.nome IS NULL ASC, LOWER(TRIM(r.nome)) ASC, LOWER(TRIM(v.nome)) ASC";
                 break;
             case 'tipo_asc':
-                $sql .= " ORDER BY t.tipo ASC, v.nome ASC";
+                $sql .= " ORDER BY t.tipo IS NULL ASC, LOWER(TRIM(t.tipo)) ASC, LOWER(TRIM(v.nome)) ASC";
                 break;
             case 'nome_asc':
             default:
-                $sql .= " ORDER BY v.nome ASC";
+                $sql .= " ORDER BY LOWER(TRIM(v.nome)) ASC";
                 break;
         }
-
+        
         $sql .= " LIMIT ? OFFSET ?";
         $params[] = (int)$limite;
         $params[] = (int)$offset;
