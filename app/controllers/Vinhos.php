@@ -174,4 +174,19 @@ class Vinhos extends Controller {
         header('Location: ' . BASE_URL . 'vinhos/lixeira');
         exit;
     }
+
+    // Esvaziar todos os vinhos da lixeira
+    public function esvaziarLixeira() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . 'auth/login');
+            exit;
+        }
+
+        $vinhoModel = $this->model('Vinho');
+        $vinhoModel->esvaziarLixeira($_SESSION['user_id']);
+
+        $_SESSION['flash'] = ['tipo' => 'sucesso', 'texto' => 'A lixeira foi esvaziada com sucesso.'];
+        header('Location: ' . BASE_URL . 'vinhos/lixeira');
+        exit;
+    }
 }

@@ -350,6 +350,45 @@ select:focus {
     border: 1px solid #e8dec8;
 }
 
+/* Cores subtis por tipo de vinho */
+.badge-tipo.tipo-tinto {
+    background-color: #f8e8ea;
+    color: #6e1e28;
+    border-color: #ebd0d4;
+}
+
+.badge-tipo.tipo-branco {
+    background-color: #fbf4df;
+    color: #7a5b14;
+    border-color: #efe0b9;
+}
+
+.badge-tipo.tipo-rose {
+    background-color: #fcebf0;
+    color: #8c304c;
+    border-color: #f4d1dc;
+}
+
+.badge-tipo.tipo-vinho-verde,
+.badge-tipo.tipo-verde {
+    background-color: #eaf3ec;
+    color: #2c5e3b;
+    border-color: #cfe3d5;
+}
+
+.badge-tipo.tipo-espumante {
+    background-color: #f7f3e6;
+    color: #6d5c2b;
+    border-color: #e6dec3;
+}
+
+.badge-tipo.tipo-licoroso,
+.badge-tipo.tipo-fortificado {
+    background-color: #f6ece2;
+    color: #75441c;
+    border-color: #e8d4c0;
+}
+
 .btn-star {
     width: 34px;
     height: 34px;

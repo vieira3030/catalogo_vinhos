@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lixeira - Adega Digital</title>
-   <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css?v=2">
+    <!-- Estilos CSS principais -->
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css?v=3">
 </head>
 <body>
 
+    <!-- Cabeçalho dinâmico partilhado -->
     <?php require_once __DIR__ . '/../includes/header.php'; ?>
 
     <div class="container">
@@ -24,7 +26,16 @@
                 <h2>Lixeira</h2>
                 <p>Os vinhos nesta lista já não aparecem no catálogo. Pode restaurá-los ou eliminá-los permanentemente.</p>
             </div>
-            <a href="<?= BASE_URL ?>" class="btn btn-secondary">Voltar ao catálogo</a>
+            <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+                <?php if (!empty($data['vinhos'])): ?>
+                    <a href="<?= BASE_URL ?>vinhos/esvaziarLixeira" 
+                       class="btn btn-danger" 
+                       onclick="return confirm('Tens a certeza que queres eliminar permanentemente todos os vinhos da lixeira?');">
+                       Esvaziar lixeira
+                    </a>
+                <?php endif; ?>
+                <a href="<?= BASE_URL ?>" class="btn btn-secondary">Voltar ao catálogo</a>
+            </div>
         </div>
 
         <div class="results-meta">
@@ -34,10 +45,22 @@
         <?php if (!empty($data['vinhos'])): ?>
             <div class="grid-vinhos">
                 <?php foreach ($data['vinhos'] as $vinho): ?>
+                    <?php
+                        // Gerar classe CSS limpa conforme o tipo de vinho
+                        $tipoTexto = $vinho['tipo'] ?? 'Sem tipo';
+                        $tipoSlug = strtr(mb_strtolower($tipoTexto, 'UTF-8'), [
+                            'á'=>'a', 'à'=>'a', 'ã'=>'a', 'â'=>'a',
+                            'é'=>'e', 'ê'=>'e', 'í'=>'i',
+                            'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
+                            'ú'=>'u', 'ç'=>'c', ' '=>'-', '/'=>'-'
+                        ]);
+                    ?>
                     <div class="card-vinho">
                         <div>
                             <div class="card-top">
-                                <span class="badge-tipo"><?= htmlspecialchars($vinho['tipo'] ?? 'Sem tipo') ?></span>
+                                <span class="badge-tipo tipo-<?= htmlspecialchars($tipoSlug) ?>">
+                                    <?= htmlspecialchars($tipoTexto) ?>
+                                </span>
                             </div>
                             <h3><?= htmlspecialchars($vinho['nome']) ?></h3>
                             <p class="card-regiao"><strong>Região</strong> · <?= htmlspecialchars($vinho['regiao'] ?? 'Não especificada') ?></p>
@@ -59,6 +82,7 @@
         <?php endif; ?>
     </div>
 
+    <!-- Rodapé -->
     <footer>
         <div class="footer-content">
             <strong>Adega Digital</strong>

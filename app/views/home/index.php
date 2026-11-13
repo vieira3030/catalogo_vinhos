@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adega Digital - Catálogo de Vinhos</title>
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css?v=2">
+    <!-- Estilos CSS principais -->
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/main.css?v=3">
 </head>
 <body>
 
+    <!-- Cabeçalho dinâmico partilhado -->
     <?php require_once __DIR__ . '/../includes/header.php'; ?>
 
     <div class="container">
@@ -99,10 +101,22 @@
         <?php if (!empty($data['vinhos'])): ?>
             <div class="grid-vinhos">
                 <?php foreach ($data['vinhos'] as $vinho): ?>
+                    <?php
+                        // Gerar classe CSS limpa conforme o tipo de vinho
+                        $tipoTexto = $vinho['tipo'] ?? 'Sem tipo';
+                        $tipoSlug = strtr(mb_strtolower($tipoTexto, 'UTF-8'), [
+                            'á'=>'a', 'à'=>'a', 'ã'=>'a', 'â'=>'a',
+                            'é'=>'e', 'ê'=>'e', 'í'=>'i',
+                            'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
+                            'ú'=>'u', 'ç'=>'c', ' '=>'-', '/'=>'-'
+                        ]);
+                    ?>
                     <div class="card-vinho">
                         <div>
                             <div class="card-top">
-                                <span class="badge-tipo"><?= htmlspecialchars($vinho['tipo'] ?? 'Sem tipo') ?></span>
+                                <span class="badge-tipo tipo-<?= htmlspecialchars($tipoSlug) ?>">
+                                    <?= htmlspecialchars($tipoTexto) ?>
+                                </span>
 
                                 <?php if (isset($_SESSION['user_id'])): ?>
                                     <a href="<?= BASE_URL ?>vinhos/favorito/<?= $vinho['id'] ?>" 
@@ -173,6 +187,7 @@
         <?php endif; ?>
     </div>
 
+    <!-- Rodapé -->
     <footer>
         <div class="footer-content">
             <strong>Adega Digital</strong>
@@ -180,7 +195,7 @@
         </div>
     </footer>
 
-<script>
+    <script>
         // Pesquisa automática com atraso ao escrever o nome
         const inputPesquisa = document.getElementById('q');
         let timerPesquisa;
@@ -202,6 +217,6 @@
             });
         }
     </script>
-</body>
 
+</body>
 </html>

@@ -219,4 +219,21 @@ class Vinho {
 
         return ['vinhos' => $totalVinhos, 'favoritos' => $totalFavs];
     }
+
+    // Eliminar permanentemente todos os vinhos da lixeira do utilizador
+    public function esvaziarLixeira($user_id) {
+        // Remover primeiro referências na tabela de favoritos
+        $sqlFav = "DELETE f FROM favoritos f
+                   INNER JOIN vinhos v ON f.vinho_id = v.id
+                   WHERE v.ativo = 0 AND (v.user_id = ? OR v.user_id IS NULL)";
+        $stmtFav = $this->db->prepare($sqlFav);
+        $stmtFav->bind_param("i", $user_id);
+        $stmtFav->execute();
+
+        // Eliminar os vinhos inativos (da conta ou base)
+        $sql = "DELETE FROM vinhos WHERE ativo = 0 AND (user_id = ? OR user_id IS NULL)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $user_id);
+        return $stmt->execute();
+    }
 }
